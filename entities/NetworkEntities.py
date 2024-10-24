@@ -1,6 +1,5 @@
 import math
 
-
 class Node:
 
     def __init__(self, x_coord, y_coord, demand):
@@ -38,3 +37,36 @@ class Truck:
 
     def get_distance_to_new_node(self, node: Node):
         return self.visited_node[-1].get_distance_to(node)
+
+    def remove_node(self, node: Node) -> bool:
+        index = self.visited_node.index(node)
+        ## we can't remove a node if (1) it is not in the visited node or (2) it is the start node.
+        if index == -1 or index == 0 or index == len(self.visited_node): return False
+        self.capacity -= node.demand
+        pre_distance_leg_1 = self.visited_node[index - 1].get_distance_to(node)
+        pre_distance_leg_2 = self.visited_node[index + 1].get_distance_to(node)
+        self.traveled_distance -= (pre_distance_leg_1 + pre_distance_leg_2)
+        self.traveled_distance += self.visited_node[index - 1].get_distance_to(self.visited_node[index + 1])
+        self.visited_node.remove(node)
+
+    def insert_node(self, node: Node, index: int) -> bool:
+        self.capacity += node.demand
+        new_distance_leg_1 = self.visited_node[index - 1].get_distance_to(node)
+        new_distance_leg_2 = self.visited_node[index].get_distance_to(node)
+        self.traveled_distance += (new_distance_leg_1 + new_distance_leg_2)
+        self.traveled_distance -= self.visited_node[index - 1].get_distance_to(self.visited_node[index])
+        self.visited_node.insert(index, node)
+
+    def additional_distance_if_visit(self, node: Node, index: int):
+        new_distance_leg_1 = self.visited_node[index - 1].get_distance_to(node)
+        new_distance_leg_2 = self.visited_node[index].get_distance_to(node)
+        old_distance = self.visited_node[index - 1].get_distance_to(self.visited_node[index])
+        return new_distance_leg_1 + new_distance_leg_2 - old_distance
+
+    def additional_distance_if_remove(self, node: Node):
+        index = self.visited_node.index(node)
+        if index == -1: return 0
+        old_distance_leg_1 = self.visited_node[index - 1].get_distance_to(node)
+        old_distance_leg_2 = self.visited_node[index + 1].get_distance_to(node)
+        new_distance = self.visited_node[index - 1].get_distance_to(self.visited_node[index + 1])
+        return new_distance - old_distance_leg_1 - old_distance_leg_2

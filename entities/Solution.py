@@ -1,4 +1,10 @@
-from entities.NetworkEntities import Truck
+from typing import List
+
+from entities.NetworkEntities import Truck, Node
+
+
+def remove_node_visit(truck: Truck, node: Node):
+    return truck.remove_node(node)
 
 
 class Solution:
@@ -10,7 +16,7 @@ class Solution:
     def add_truck(self, truck):
         self.all_truck.append(truck)
 
-    def get_trucks(self):
+    def get_trucks(self) -> List[Truck]:
         return self.all_truck
 
     def get_total_travel_distance(self):
@@ -18,3 +24,4 @@ class Solution:
 
     def get_number_of_trucks(self):
         return len(self.all_truck)
+
