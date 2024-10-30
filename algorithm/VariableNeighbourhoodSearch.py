@@ -16,6 +16,6 @@ class VariableNeighbourhoodSearch:
             best_local_move.apply(self.solution)
             count += 1
             print(count)
-            if count > 300: break
+            if count > 30: break
 
         return self.solution

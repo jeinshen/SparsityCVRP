@@ -5,8 +5,8 @@ from algorithm.VariableNeighbourhoodSearch import VariableNeighbourhoodSearch
 from algorithm.GreedySolver import GreedySolver
 
 ## For now let's use one example for testing
-instance = vrplib.read_instance("./data/Li/Li_21.vrp")
-solution = vrplib.read_solution("./data/Li/Li_21.sol")
+instance = vrplib.read_instance("./data/Li/Li_26.vrp")
+solution = vrplib.read_solution("./data/Li/Li_26.sol")
 
 greedy_solver = GreedySolver()
 our_solution = greedy_solver.solve(instance)
