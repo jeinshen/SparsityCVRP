@@ -9,7 +9,6 @@ def remove_node_visit(truck: Truck, node: Node):
 
 class Solution:
 
-
     def __init__(self):
         self.all_truck = []
 

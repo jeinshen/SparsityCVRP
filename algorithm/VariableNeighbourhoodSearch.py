@@ -11,10 +11,11 @@ class VariableNeighbourhoodSearch:
         relocate_search = Relocate()
         count = 0
         while True:
-            best_local_move = relocate_search.find_best_feasible_local_moves(self.solution)
+            best_local_move = relocate_search.find_best_feasible_local_move(self.solution)
             if best_local_move is None: break
             best_local_move.apply(self.solution)
             count += 1
-            if count > 100: break
+            print(count)
+            if count > 300: break
 
         return self.solution
