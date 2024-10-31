@@ -63,7 +63,6 @@ class IteratedLocalSearch:
 
         new_solution_cost = self.current_solution.get_total_travel_distance()
         current_solution_cost = self.best_solution.get_total_travel_distance()
-        print(current_solution_cost, new_solution_cost)
         if new_solution_cost < current_solution_cost or random.random() < math.exp(
                 (current_solution_cost - new_solution_cost) / temperature):
             if self.current_solution.get_total_travel_distance() < self.best_solution.get_total_travel_distance():
@@ -75,8 +74,6 @@ class IteratedLocalSearch:
         count = 0
         iteration = 0
         while True:
-            if iteration == 30:
-                print(iteration)
             iteration, count = self.__run_iteration(iteration, count)
             if iteration > 3000: break
 
