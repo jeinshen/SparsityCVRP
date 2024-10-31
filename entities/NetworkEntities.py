@@ -6,9 +6,18 @@ class Node:
         self.x_coord = x_coord
         self.y_coord = y_coord
         self.demand = demand
+        self.hashcode = hash((self.x_coord, self.y_coord, self.demand))
 
     def get_distance_to(self, other_node):
         return math.sqrt((self.x_coord - other_node.x_coord) ** 2 + (self.y_coord - other_node.y_coord) ** 2)
+
+    def __hash__(self):
+        return self.hashcode
+
+    def __eq__(self, other):
+        if not isinstance(other, Node):
+            return False
+        return self.__hash__() == other.__hash__()
 
 class Truck:
 
@@ -18,6 +27,14 @@ class Truck:
         self.visited_node = [Node(0, 0, 0)]
         self.traveled_distance = 0
         self.truck_id = truck_id
+        self.hashcode = hash(self.truck_id)
+    def __hash__(self):
+        return self.hashcode
+
+    def __eq__(self, other):
+        if not isinstance(other, Truck):
+            return False
+        return self.__hash__() == other.__hash__()
 
     def get_remaining_capacity(self):
         return self.capacity - self.used_capacity
