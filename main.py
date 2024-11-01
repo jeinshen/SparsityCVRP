@@ -27,6 +27,8 @@ result_df = pd.DataFrame(columns=["instance", "initial solution", "greedy pick s
 
 for instance in instances:
 
+    print("solve for instance " + instance)
+
     ## For now let's use one example for testing
     instance_definition = vrplib.read_instance(instance + ".vrp")
     solution = vrplib.read_solution(instance + ".sol")
@@ -42,8 +44,8 @@ for instance in instances:
     ils_pick = IteratedLocalSearch(greedy_solution)
     iterated_local_search_solution = ils_pick.solve()
     ils_solution_cost = iterated_local_search_solution.get_total_travel_distance()
-    result_df = result_df.append({"instance": instance, "initial solution" : initial_solution_cost,
+    result_df.loc[len(result_df)] = pd.Series({"instance": instance, "initial solution" : initial_solution_cost,
                                   "greedy pick solution" : greedy_pick_solution_cost,
-                                  "ILS solution" : ils_solution_cost}, ignore_index=True)
+                                  "ILS solution" : ils_solution_cost})
 
 result_df.to_csv("./data/Li/result_df.csv")

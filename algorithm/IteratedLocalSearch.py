@@ -10,15 +10,15 @@ from entities.Solution import Solution
 
 
 def select_random_move_weight(candidate_list):
-    delta_gain = [np.exp(-candidate.delta_gain + 0.001) for candidate in candidate_list]
+    delta_gain = [np.exp(-candidate.delta_gain/100 + 0.001) + 1 for candidate in candidate_list]
     total_weight = sum(delta_gain)
     norm_prob = [float(i) / total_weight for i in delta_gain]
     return choice(candidate_list, size=1, p=norm_prob)[0]
 
 def select_random_move_reverse_weight(candidate_list):
-    delta_gain = [np.exp(candidate.delta_gain) for candidate in candidate_list]
-    ## total_weight = sum(delta_gain)
-    norm_prob = [1 / len(delta_gain) for i in delta_gain]
+    # delta_gain = [np.exp(candidate.delta_gain/100) for candidate in candidate_list]
+    # total_weight = sum(delta_gain)
+    norm_prob = [1 / len(candidate_list) for _ in candidate_list]
     return choice(candidate_list, size=1, p=norm_prob)[0]
 
 def temperature_schedule(iteration, max_iterations):
@@ -33,7 +33,7 @@ class IteratedLocalSearch:
 
     def __run_iteration(self, iteration, count_current_changes):
         relocate_search = Relocate()
-        temperature = temperature_schedule(iteration, 3000)
+        temperature = temperature_schedule(iteration, 100)
         if count_current_changes >= 30:
             reversed_move_count = 0
             try_count = 0
@@ -53,9 +53,10 @@ class IteratedLocalSearch:
                 selected_move = relocate_search.find_best_feasible_local_move(self.current_solution)
             else:
                 all_local_candidates = relocate_search.find_feasible_local_moves(self.current_solution)
-                if len(all_local_candidates) == 0:
+                all_local_candidates_filtered = [x for x in all_local_candidates if not np.isnan(x.delta_gain)]
+                if len(all_local_candidates_filtered) == 0:
                     break
-                selected_move = select_random_move_weight(all_local_candidates)
+                selected_move = select_random_move_weight(all_local_candidates_filtered)
 
             self.best_solution_accepted_moves.append(selected_move)
             selected_move.apply(self.current_solution)
@@ -75,7 +76,7 @@ class IteratedLocalSearch:
         iteration = 0
         while True:
             iteration, count = self.__run_iteration(iteration, count)
-            if iteration > 3000: break
+            if iteration > 100: break
 
         return self.best_solution
 
