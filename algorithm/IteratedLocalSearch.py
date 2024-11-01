@@ -31,10 +31,11 @@ class IteratedLocalSearch:
         # random seed 3407 is all you need
         random_seed = 3407
         np.random.seed(random_seed)
+        self.iteration_without_improvement = 0
 
     def __run_iteration(self, iteration, count_current_changes):
         relocate_search = Relocate()
-        temperature = temperature_schedule(iteration, 100)
+        temperature = temperature_schedule(iteration, 2000)
         if count_current_changes >= 30:
             reversed_move_count = 0
             try_count = 0
@@ -69,6 +70,11 @@ class IteratedLocalSearch:
                 (current_solution_cost - new_solution_cost) / temperature):
             if self.current_solution.get_total_travel_distance() < self.best_solution.get_total_travel_distance():
                 self.best_solution = deepcopy(self.current_solution)
+            self.iteration_without_improvement = 0
+        else:
+            self.iteration_without_improvement += 1
+            if self.iteration_without_improvement >= 100:
+                self.current_solution = deepcopy(self.best_solution)
         iteration += 1
         return iteration, count_current_changes
 
@@ -77,7 +83,7 @@ class IteratedLocalSearch:
         iteration = 0
         while True:
             iteration, count = self.__run_iteration(iteration, count)
-            if iteration > 100: break
+            if iteration > 2000: break
 
         return self.best_solution
 
