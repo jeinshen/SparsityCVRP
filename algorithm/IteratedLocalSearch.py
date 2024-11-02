@@ -36,15 +36,16 @@ class IteratedLocalSearch:
     def __run_iteration(self, iteration, count_current_changes):
         relocate_search = Relocate()
         temperature = temperature_schedule(iteration, 2000)
+        accepted_moves = list(self.best_solution_accepted_moves)
         if count_current_changes >= 30:
             reversed_move_count = 0
             try_count = 0
             while reversed_move_count < 10:
-                move_to_be_reversed = select_random_move_reverse_weight(self.best_solution_accepted_moves)
+                move_to_be_reversed = select_random_move_reverse_weight(accepted_moves)
                 reversed_move = move_to_be_reversed.reverse_move()
                 try_count += 1
                 if reversed_move.is_local_move_feasible(self.current_solution):
-                    self.best_solution_accepted_moves.remove(move_to_be_reversed)
+                    accepted_moves.remove(move_to_be_reversed)
                     reversed_move.apply(self.current_solution)
                     count_current_changes -= 1
                     reversed_move_count += 1
@@ -60,7 +61,7 @@ class IteratedLocalSearch:
                     break
                 selected_move = select_random_move_weight(all_local_candidates_filtered)
 
-            self.best_solution_accepted_moves.append(selected_move)
+            accepted_moves.append(selected_move)
             selected_move.apply(self.current_solution)
             count_current_changes += 1
 
@@ -70,6 +71,7 @@ class IteratedLocalSearch:
                 (current_solution_cost - new_solution_cost) / temperature):
             if self.current_solution.get_total_travel_distance() < self.best_solution.get_total_travel_distance():
                 self.best_solution = deepcopy(self.current_solution)
+                self.best_solution_accepted_moves = accepted_moves
             self.iteration_without_improvement = 0
         else:
             self.iteration_without_improvement += 1
