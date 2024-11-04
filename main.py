@@ -47,5 +47,5 @@ for instance in instances:
     result_df.loc[len(result_df)] = pd.Series({"instance": instance, "initial solution" : initial_solution_cost,
                                   "greedy pick solution" : greedy_pick_solution_cost,
                                   "ILS solution" : ils_solution_cost})
-
-result_df.to_csv("./data/Li/result_df.csv")
+    ## ongoing writing
+    result_df.to_csv("./data/Li/result_df.csv")
