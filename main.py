@@ -10,6 +10,10 @@ from algorithm.GreedySolver import GreedySolver
 from writers.SolutionWriter import SolutionWriter
 
 import logging
+
+folder_path = './data/result/'
+if not os.path.exists(folder_path):
+    os.makedirs(folder_path)
 logging.basicConfig(filename='./data/result/run.log', level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
