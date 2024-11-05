@@ -89,10 +89,6 @@ class IteratedLocalSearch:
         while True:
             if iteration % 100 == 0:
                 self.logging.info("current {} iterations of ils".format(iteration))
-
-            print("iteration {}, best solution {}, current solution {}".format(
-                iteration, self.best_solution.get_total_travel_distance(), self.current_solution.get_total_travel_distance()))
-
             iteration = self.__run_iteration(iteration)
             if iteration > Parameters.max_ils_iterations: break
 
