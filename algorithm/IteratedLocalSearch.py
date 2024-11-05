@@ -4,6 +4,7 @@ import numpy as np
 import math
 
 from algorithm.NeighbourhoodSearch import Relocate
+from entities.Parameters import Parameters
 from entities.Solution import Solution
 
 
@@ -24,21 +25,20 @@ def temperature_schedule(iteration, max_iterations):
 
 class IteratedLocalSearch:
 
-    def __init__(self, solution: Solution):
+    def __init__(self, solution: Solution, logging):
         self.current_solution = solution
         self.best_solution = deepcopy(self.current_solution)
         self.best_solution_accepted_moves = []
-        # random seed 3407 is all you need
-        random_seed = 3407
-        np.random.seed(random_seed)
+        np.random.seed(Parameters.random_seed)
         self.iteration_without_improvement = 0
+        self.logging = logging
 
     def __run_iteration(self, iteration):
         relocate_search = Relocate()
-        temperature = temperature_schedule(iteration, 2000)
+        temperature = temperature_schedule(iteration, Parameters.max_ils_iterations)
         accepted_moves = list(self.best_solution_accepted_moves)
         count_current_changes = len(accepted_moves)
-        if count_current_changes >= 30:
+        if count_current_changes >= Parameters.max_changes:
             reversed_move_count = 0
             try_count = 0
             while reversed_move_count < 10:
@@ -52,8 +52,9 @@ class IteratedLocalSearch:
                     reversed_move_count += 1
                 if try_count >= 100:
                     break
-        while count_current_changes < 30:
-            if iteration < 100:
+        while count_current_changes < Parameters.max_changes:
+            try_count = 0
+            if iteration < 2000:
                 selected_move = relocate_search.find_best_feasible_local_move(self.current_solution)
             else:
                 all_local_candidates = relocate_search.find_feasible_local_moves(self.current_solution)
@@ -61,22 +62,24 @@ class IteratedLocalSearch:
                 if len(all_local_candidates_filtered) == 0:
                     break
                 selected_move = select_random_move_weight(all_local_candidates_filtered)
-
             accepted_moves.append(selected_move)
             selected_move.apply(self.current_solution)
             count_current_changes += 1
+            try_count += 1
+            if try_count >= 100:
+                break
 
         new_solution_cost = self.current_solution.get_total_travel_distance()
         current_solution_cost = self.best_solution.get_total_travel_distance()
         if new_solution_cost < current_solution_cost or np.random.random() < math.exp(
                 (current_solution_cost - new_solution_cost) / temperature):
-            if self.current_solution.get_total_travel_distance() < self.best_solution.get_total_travel_distance():
+            if new_solution_cost < current_solution_cost:
                 self.best_solution = deepcopy(self.current_solution)
                 self.best_solution_accepted_moves = accepted_moves
             self.iteration_without_improvement = 0
         else:
             self.iteration_without_improvement += 1
-            if self.iteration_without_improvement >= 100:
+            if self.iteration_without_improvement >= 30:
                 self.current_solution = deepcopy(self.best_solution)
         iteration += 1
         return iteration
@@ -84,8 +87,14 @@ class IteratedLocalSearch:
     def solve(self):
         iteration = 0
         while True:
+            if iteration % 100 == 0:
+                self.logging.info("current {} iterations of ils".format(iteration))
+
+            print("iteration {}, best solution {}, current solution {}".format(
+                iteration, self.best_solution.get_total_travel_distance(), self.current_solution.get_total_travel_distance()))
+
             iteration = self.__run_iteration(iteration)
-            if iteration > 2000: break
+            if iteration > Parameters.max_ils_iterations: break
 
         return self.best_solution
 

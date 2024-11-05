@@ -34,7 +34,7 @@ class GreedySolver:
             coord = self.instance['node_coord'][node_index]
             demand = self.instance['demand'][node_index]
             if demand == 0.0: continue
-            self.not_visited_node.append(Node(coord[0], coord[1], demand))
+            self.not_visited_node.append(Node(coord[0], coord[1], demand, node_index + 1))
 
     def __find_node_to_visit_in_greedy_way(self, truck):
         best_node_to_visit = None

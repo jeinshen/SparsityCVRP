@@ -2,10 +2,11 @@ import math
 
 class Node:
 
-    def __init__(self, x_coord, y_coord, demand):
+    def __init__(self, x_coord, y_coord, demand, node_id):
         self.x_coord = x_coord
         self.y_coord = y_coord
         self.demand = demand
+        self.node_id = node_id
         self.hashcode = hash((self.x_coord, self.y_coord, self.demand))
 
     def get_distance_to(self, other_node):
@@ -24,7 +25,7 @@ class Truck:
     def __init__(self, capacity, truck_id):
         self.capacity = capacity
         self.used_capacity = 0
-        self.visited_node = [Node(0, 0, 0)]
+        self.visited_node = [Node(0, 0, 0, 1)]
         self.traveled_distance = 0
         self.truck_id = truck_id
         self.hashcode = hash(self.truck_id)
@@ -45,7 +46,7 @@ class Truck:
         self.visited_node.append(node)
 
     def back_to_start_node(self):
-        start_node = Node(0, 0, 0)
+        start_node = Node(0, 0, 0, 1)
         self.traveled_distance += start_node.get_distance_to(self.visited_node[-1])
         self.visited_node.append(start_node)
 
