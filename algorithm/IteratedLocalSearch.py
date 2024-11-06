@@ -62,6 +62,9 @@ class IteratedLocalSearch:
                 if len(all_local_candidates_filtered) == 0:
                     break
                 selected_move = select_random_move_weight(all_local_candidates_filtered)
+
+            if isinstance(selected_move, type(None)):
+                break
             accepted_moves.append(selected_move)
             selected_move.apply(self.current_solution)
             count_current_changes += 1
