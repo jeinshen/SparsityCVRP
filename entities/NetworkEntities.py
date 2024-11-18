@@ -1,16 +1,18 @@
-import math
+
 
 class Node:
 
-    def __init__(self, x_coord, y_coord, demand, node_id):
+    def __init__(self, x_coord, y_coord, demand, node_id, distance_matrix):
         self.x_coord = x_coord
         self.y_coord = y_coord
         self.demand = demand
         self.node_id = node_id
         self.hashcode = hash((self.x_coord, self.y_coord, self.demand))
+        self.distance_matrix = distance_matrix
 
     def get_distance_to(self, other_node):
-        return math.sqrt((self.x_coord - other_node.x_coord) ** 2 + (self.y_coord - other_node.y_coord) ** 2)
+        return self.distance_matrix[self.node_id - 1][other_node.node_id - 1]
+        # return math.sqrt((self.x_coord - other_node.x_coord) ** 2 + (self.y_coord - other_node.y_coord) ** 2)
 
     def __hash__(self):
         return self.hashcode
@@ -22,10 +24,11 @@ class Node:
 
 class Truck:
 
-    def __init__(self, capacity, truck_id):
+    def __init__(self, capacity, truck_id, distance_matrix):
         self.capacity = capacity
         self.used_capacity = 0
-        self.visited_node = [Node(0, 0, 0, 1)]
+        self.distance_matrix = distance_matrix
+        self.visited_node = [Node(0, 0, 0, 1, self.distance_matrix)]
         self.traveled_distance = 0
         self.truck_id = truck_id
         self.hashcode = hash(self.truck_id)
@@ -46,7 +49,7 @@ class Truck:
         self.visited_node.append(node)
 
     def back_to_start_node(self):
-        start_node = Node(0, 0, 0, 1)
+        start_node = Node(0, 0, 0, 1, self.distance_matrix)
         self.traveled_distance += start_node.get_distance_to(self.visited_node[-1])
         self.visited_node.append(start_node)
 

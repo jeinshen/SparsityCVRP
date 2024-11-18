@@ -1,3 +1,5 @@
+import math
+
 from entities.NetworkEntities import Node, Truck
 from entities.Solution import Solution
 
@@ -8,6 +10,7 @@ class GreedySolver:
 
     def solve(self, instance):
         self.instance = instance
+        self.distance_matrix = self.__build_distance_matrix()
         self.solution = Solution()
         self.truck_capacity = self.instance['capacity']
         self.not_visited_node = []
@@ -15,9 +18,21 @@ class GreedySolver:
         self.__visit_node_in_greedy()
         return self.solution
 
+    def __build_distance_matrix(self):
+        total_size = len(self.instance['node_coord'])
+        distance_matrix = [[None for _ in range(total_size)] for _ in range(total_size)]
+        for node_index_i in range(len(self.instance['node_coord'])):
+            for node_index_j in range(len(self.instance['node_coord'])):
+                coord_i = self.instance['node_coord'][node_index_i]
+                coord_j = self.instance['node_coord'][node_index_j]
+                distance = math.sqrt((coord_i[0] - coord_j[0]) ** 2 + (coord_i[1] - coord_j[1]) ** 2)
+                distance_matrix[node_index_i][node_index_j] = distance
+        return distance_matrix
+
     def __visit_node_in_greedy(self):
         while len(self.not_visited_node) != 0:
-            new_truck = Truck(capacity=self.truck_capacity, truck_id=self.global_truck_id)
+            new_truck = Truck(capacity=self.truck_capacity, truck_id=self.global_truck_id,
+                              distance_matrix=self.distance_matrix)
             self.global_truck_id += 1
             while True:
                 best_node = self.__find_node_to_visit_in_greedy_way(new_truck)
@@ -34,7 +49,7 @@ class GreedySolver:
             coord = self.instance['node_coord'][node_index]
             demand = self.instance['demand'][node_index]
             if demand == 0.0: continue
-            self.not_visited_node.append(Node(coord[0], coord[1], demand, node_index + 1))
+            self.not_visited_node.append(Node(coord[0], coord[1], demand, node_index + 1, self.distance_matrix))
 
     def __find_node_to_visit_in_greedy_way(self, truck):
         best_node_to_visit = None
