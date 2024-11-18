@@ -2,8 +2,8 @@
 
 class Parameters:
 
-    # max number of changes allowed from inital solution
-    max_changes = 60
+    # max number of changes allowed from initial solution (in terms of percentage of total nodes)
+    max_changes = 0.05
     # random seed 3407 is all you need
     random_seed = 3407
     # max ils iterations

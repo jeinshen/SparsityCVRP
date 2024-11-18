@@ -25,8 +25,9 @@ def temperature_schedule(iteration, max_iterations):
 
 class IteratedLocalSearch:
 
-    def __init__(self, solution: Solution, logging):
+    def __init__(self, solution: Solution, logging, changes_allowed: int):
         self.current_solution = solution
+        self.changes_allowed = changes_allowed
         self.best_solution = deepcopy(self.current_solution)
         self.best_solution_accepted_moves = []
         np.random.seed(Parameters.random_seed)
@@ -38,7 +39,7 @@ class IteratedLocalSearch:
         temperature = temperature_schedule(iteration, Parameters.max_ils_iterations)
         accepted_moves = list(self.best_solution_accepted_moves)
         count_current_changes = len(accepted_moves)
-        if count_current_changes >= Parameters.max_changes:
+        if count_current_changes >= self.changes_allowed:
             reversed_move_count = 0
             try_count = 0
             while reversed_move_count < 10:
@@ -52,7 +53,7 @@ class IteratedLocalSearch:
                     reversed_move_count += 1
                 if try_count >= 100:
                     break
-        while count_current_changes < Parameters.max_changes:
+        while count_current_changes < self.changes_allowed:
             try_count = 0
             if iteration < 2000:
                 selected_move = relocate_search.find_best_feasible_local_move(self.current_solution)

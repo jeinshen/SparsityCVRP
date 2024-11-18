@@ -1,3 +1,4 @@
+import math
 import os
 from copy import deepcopy
 
@@ -7,6 +8,7 @@ import vrplib
 from algorithm.IteratedLocalSearch import IteratedLocalSearch
 from algorithm.VariableNeighbourhoodSearch import VariableNeighbourhoodSearch
 from algorithm.GreedySolver import GreedySolver
+from entities.Parameters import Parameters
 from writers.SolutionWriter import SolutionWriter
 
 import logging
@@ -45,6 +47,8 @@ for instance in instances:
     ## Step 1: read in instance and best solution
     instance_definition = vrplib.read_instance(instance + ".vrp")
     best_solution = vrplib.read_solution(instance + ".sol")
+    instance_size = instance_definition['dimension']
+    changes_allowed = math.floor(instance_size * Parameters.max_changes)
 
     ## Step 2: build the initial solution
     logging.info("solve for instance {} using greedy to build initial solution".format(instance))
@@ -55,7 +59,7 @@ for instance in instances:
     ## Step 3: solve for vnd pick
     logging.info("solve for instance {} using vnd".format(instance))
     initial_solution = deepcopy(greedy_solution)
-    vnd_solution = vnd_solver.solve(initial_solution)
+    vnd_solution = vnd_solver.solve(initial_solution, changes_allowed)
     vnd_solution_cost = vnd_solution.get_total_travel_distance()
     SolutionWriter().write(vnd_solution, instance, "vnd_solution")
     logging.info("solved for instance {} using vnd, at total cost of {}".format(instance, vnd_solution_cost))
