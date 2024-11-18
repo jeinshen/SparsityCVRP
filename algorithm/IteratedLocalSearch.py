@@ -25,14 +25,13 @@ def temperature_schedule(iteration, max_iterations):
 
 class IteratedLocalSearch:
 
-    def __init__(self, solution: Solution, logging, changes_allowed: int):
+    def __init__(self, solution: Solution, changes_allowed: int):
         self.current_solution = solution
         self.changes_allowed = changes_allowed
         self.best_solution = deepcopy(self.current_solution)
         self.best_solution_accepted_moves = []
         np.random.seed(Parameters.random_seed)
         self.iteration_without_improvement = 0
-        self.logging = logging
 
     def __run_iteration(self, iteration):
         relocate_search = Relocate()
@@ -91,13 +90,6 @@ class IteratedLocalSearch:
     def solve(self):
         iteration = 0
         while True:
-            if iteration % 10 == 0:
-                print(iteration)
-                print(self.best_solution.get_total_travel_distance())
-                for truck in self.current_solution.get_trucks():
-                    print(truck.used_capacity)
-                self.logging.info("current {} iterations of ils, best solution at {}".format(
-                    iteration, self.best_solution.get_total_travel_distance()))
             iteration = self.__run_iteration(iteration)
             if iteration > Parameters.max_ils_iterations: break
 
