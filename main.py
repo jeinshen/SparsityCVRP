@@ -67,7 +67,7 @@ for instance in instances:
     ## Step 4: solve for ils
     logging.info("solve for instance {} using ils".format(instance))
     initial_solution_ils = deepcopy(greedy_solution)
-    ils_pick = IteratedLocalSearch(initial_solution_ils, logging)
+    ils_pick = IteratedLocalSearch(initial_solution_ils, logging, instance_size)
     iterated_local_search_solution = ils_pick.solve()
     ils_solution_cost = iterated_local_search_solution.get_total_travel_distance()
     SolutionWriter().write(iterated_local_search_solution, instance, "ils_solution")
