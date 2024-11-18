@@ -47,4 +47,5 @@ class LocalMove:
             if (local_change.node not in local_change.truck_current.visited_node
                     or len(local_change.truck_new.visited_node) <= local_change.position+2):
                 return False
+
         return True

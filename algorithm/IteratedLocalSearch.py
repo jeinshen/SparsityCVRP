@@ -55,7 +55,7 @@ class IteratedLocalSearch:
                     break
         while count_current_changes < self.changes_allowed:
             try_count = 0
-            if iteration < 2000:
+            if iteration < 100:
                 selected_move = relocate_search.find_best_feasible_local_move(self.current_solution)
             else:
                 all_local_candidates = relocate_search.find_feasible_local_moves(self.current_solution)
@@ -91,7 +91,9 @@ class IteratedLocalSearch:
     def solve(self):
         iteration = 0
         while True:
-            if iteration % 100 == 0:
+            print(iteration)
+            print(self.best_solution.get_total_travel_distance())
+            if iteration % 33 == 0:
                 self.logging.info("current {} iterations of ils, best solution at {}".format(
                     iteration, self.best_solution.get_total_travel_distance()))
             iteration = self.__run_iteration(iteration)

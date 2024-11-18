@@ -60,7 +60,7 @@ class Truck:
         index = self.visited_node.index(node)
         ## we can't remove a node if (1) it is not in the visited node or (2) it is the start node.
         if index == -1 or index == 0 or index == len(self.visited_node): return False
-        self.capacity -= node.demand
+        self.used_capacity -= node.demand
         pre_distance_leg_1 = self.visited_node[index - 1].get_distance_to(node)
         pre_distance_leg_2 = self.visited_node[index + 1].get_distance_to(node)
         self.traveled_distance -= (pre_distance_leg_1 + pre_distance_leg_2)
@@ -68,7 +68,7 @@ class Truck:
         self.visited_node.remove(node)
 
     def insert_node(self, node: Node, index: int) -> bool:
-        self.capacity += node.demand
+        self.used_capacity += node.demand
         new_distance_leg_1 = self.visited_node[index - 1].get_distance_to(node)
         new_distance_leg_2 = self.visited_node[index].get_distance_to(node)
         self.traveled_distance += (new_distance_leg_1 + new_distance_leg_2)
