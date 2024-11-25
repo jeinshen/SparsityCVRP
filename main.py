@@ -61,7 +61,7 @@ def run_one_instance(instance_name_and_change_size):
     ## Step 4: solve for ils
     logging.info("solve for instance {} using ils".format(instance_name))
     initial_solution_ils = deepcopy(greedy_solution)
-    ils_pick = IteratedLocalSearch(initial_solution_ils, changes_allowed)
+    ils_pick = IteratedLocalSearch(initial_solution_ils, changes_allowed, change_size)
     iterated_local_search_solution = ils_pick.solve()
     ils_solution_cost = iterated_local_search_solution.get_total_travel_distance()
     SolutionWriter().write(iterated_local_search_solution, instance_name, "ils_solution")

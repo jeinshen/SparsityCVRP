@@ -25,9 +25,12 @@ def temperature_schedule(iteration, max_iterations):
 
 class IteratedLocalSearch:
 
-    def __init__(self, solution: Solution, changes_allowed: int):
+    def __init__(self, solution: Solution, changes_allowed: int, change_scale: int):
         self.current_solution = solution
         self.changes_allowed = changes_allowed
+        self.change_time = math.floor(change_scale / 0.05)
+        self.revert_size = self.change_time * 10
+        self.max_iteration = self.change_time * Parameters.max_ils_iterations
         self.best_solution = deepcopy(self.current_solution)
         self.best_solution_accepted_moves = []
         np.random.seed(Parameters.random_seed)
@@ -41,7 +44,7 @@ class IteratedLocalSearch:
         if count_current_changes >= self.changes_allowed:
             reversed_move_count = 0
             try_count = 0
-            while reversed_move_count < 10:
+            while reversed_move_count < self.revert_size:
                 move_to_be_reversed = select_random_move_reverse_weight(accepted_moves)
                 reversed_move = move_to_be_reversed.reverse_move()
                 try_count += 1
@@ -54,7 +57,7 @@ class IteratedLocalSearch:
                     break
         while count_current_changes < self.changes_allowed:
             try_count = 0
-            if iteration < 3000:
+            if iteration < self.max_iteration:
                 selected_move = relocate_search.find_best_feasible_local_move(self.current_solution)
             else:
                 all_local_candidates = relocate_search.find_feasible_local_moves(self.current_solution)
@@ -69,7 +72,7 @@ class IteratedLocalSearch:
             selected_move.apply(self.current_solution)
             count_current_changes += 1
             try_count += 1
-            if try_count >= 100:
+            if try_count >= 200:
                 break
 
         new_solution_cost = self.current_solution.get_total_travel_distance()
@@ -91,7 +94,7 @@ class IteratedLocalSearch:
         iteration = 0
         while True:
             iteration = self.__run_iteration(iteration)
-            if iteration > Parameters.max_ils_iterations: break
+            if iteration > self.max_iteration: break
 
         return self.best_solution
 
